@@ -9,16 +9,22 @@ interface FormSwitcherProps {
 }
 
 export default function FormSwitcher({ currentForm }: FormSwitcherProps) {
+  let content;
   switch (currentForm) {
     case "pacientes":
-      return <ExamSearchForm />;
+      content = <ExamSearchForm />;
+      break;
     case "fechas":
-      return <div>Form for Fechas (Coming soon)</div>;
+      content = <div>Form for Fechas (Coming soon)</div>;
+      break;
     case "servicios":
-      return <div>Form for Servicios (Coming soon)</div>;
+      content = <div>Form for Servicios (Coming soon)</div>;
+      break;
     case "nueva-solicitud":
-      return <MultiStepForm />;
+      content = <MultiStepForm />;
+      break;
     default:
-      return <div>Select a form from the sidebar</div>;
+      content = <div>Select a form from the sidebar</div>;
   }
+  return <div className="w-full">{content}</div>;
 }

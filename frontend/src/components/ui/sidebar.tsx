@@ -10,7 +10,7 @@ interface SidebarProps {
 
 export default function Sidebar({ onFormChange, currentForm }: SidebarProps) {
   return (
-    <Card className="w-fit h-fit flex flex-col gap-2 p-4">
+    <Card className="w-full md:w-64 h-fit flex flex-col gap-2 p-4">
       <Button
         variant="outline"
         onClick={() => onFormChange("pacientes")}
