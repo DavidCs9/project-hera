@@ -1,4 +1,3 @@
-import { Exam, examSchema } from "@/lib/schemas/exam";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
@@ -19,37 +18,33 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Patient } from "@/lib/schemas/patient";
+  NewPatient,
+  NewExam,
+  examInsertSchema,
+} from "../../../../backend/src/db/schema";
 
 interface ExamFormProps {
-  onSubmit: (data: Exam) => void;
+  onSubmit: (data: NewExam) => void;
   onBack: () => void;
-  exam: Exam | null;
-  patient: Patient;
+  exam: NewExam | null;
+  patient: NewPatient;
   isLoading?: boolean;
 }
 
 export default function ExamForm({
   onSubmit,
   onBack,
-  exam,
   patient,
   isLoading = false,
 }: ExamFormProps) {
-  const form = useForm<Exam>({
-    resolver: zodResolver(examSchema),
+  const form = useForm<NewExam>({
+    resolver: zodResolver(examInsertSchema),
     defaultValues: {
-      requestingService: exam?.requestingService || "urology",
+      patientId: 1,
+      requestingService: patient?.primaryService || "",
       requestDate: new Date(),
       resultDate: null,
-      result: null,
       status: "pending",
-      patient: patient,
     },
   });
 

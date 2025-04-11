@@ -17,8 +17,7 @@ export default function FormSwitcher({ currentForm }: FormSwitcherProps) {
     case "servicios":
       return <div>Form for Servicios (Coming soon)</div>;
     case "nueva-solicitud":
-      // return <MultiStepForm />;
-      return <div>Form for Nueva Solicitud (Coming soon)</div>;
+      return <MultiStepForm />;
     default:
       return <div>Select a form from the sidebar</div>;
   }

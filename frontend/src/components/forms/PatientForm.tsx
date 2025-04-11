@@ -17,19 +17,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { patientSchema, type Patient } from "@/lib/schemas/patient";
+import {
+  NewPatient,
+  patientInsertSchema,
+} from "../../../../backend/src/db/schema";
 
 export default PatientForm;
 
 interface PatientFormProps {
-  onSubmit: (data: Patient) => void;
-  defaultValues?: Partial<Patient>;
+  onSubmit: (data: NewPatient) => void;
+  defaultValues?: Partial<NewPatient>;
   isLoading?: boolean;
 }
 
 function PatientForm({ onSubmit }: PatientFormProps) {
-  const form = useForm<Patient>({
-    resolver: zodResolver(patientSchema),
+  const form = useForm<NewPatient>({
+    resolver: zodResolver(patientInsertSchema),
     mode: "onChange",
     defaultValues: {
       firstLastName: "",

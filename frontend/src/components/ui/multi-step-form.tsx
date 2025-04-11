@@ -1,5 +1,4 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Exam } from "@/lib/schemas/exam";
 import { useState } from "react";
 import { CheckIcon } from "lucide-react";
 import PatientForm from "@/components/forms/PatientForm";
@@ -7,35 +6,56 @@ import ExamForm from "@/components/forms/ExamForm";
 import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { examService } from "@/lib/db/exam-service";
-import { Patient } from "@/lib/schemas/patient";
+import { NewExam, NewPatient } from "../../../../backend/src/db/schema";
+import { trpc } from "@/utils/trpc";
 
 export default function MultiStepForm() {
   const [step, setStep] = useState<"patient" | "exam" | "success">("patient");
-  const [exam, setExam] = useState<Exam | null>(null);
-  const [patient, setPatient] = useState<Patient>();
+  const [exam, setExam] = useState<NewExam | null>(null);
+  const [patient, setPatient] = useState<NewPatient>();
 
-  // Create exam mutation
-  const { mutate: createExam, isPending: isCreatingExam } = useMutation({
-    mutationFn: examService.create,
+  // --- Corrected useMutation setup ---
+  const {
+    mutate, // The function to call to trigger the mutation
+    isPending, // Loading state for the mutation
+  } = useMutation({
+    // 1. Spread the base mutation options from tRPC
+    ...trpc.exam.create.mutationOptions(),
+    // 2. Add standard react-query mutation callbacks (optional but recommended)
     onSuccess: (data) => {
-      setExam(data);
+      // 'data' here is the return value from your tRPC mutation ({ message: ... })
+      console.log("Mutation successful:", data.message);
+      // Reset state, navigate, show success message, etc.
       setStep("success");
-      toast.success("Solicitud de examen creada exitosamente");
+      setPatient(undefined); // Clear form state on success
+      setExam(null);
+      toast.success("Solicitud creada con éxito");
     },
-    onError: (error: Error) => {
-      toast.error("Error al crear examen: " + error.message);
+    onError: (error) => {
+      // 'error' here is the TRPCClientErrorLike
+      console.error("Mutation failed:", error);
+      toast.error("Error al crear la solicitud");
+      // Display an error message to the user
     },
   });
 
-  const onPatientSubmit = async (data: Patient) => {
+  const onPatientSubmit = async (data: NewPatient) => {
     setPatient(data);
     setStep("exam");
   };
 
-  const onExamSubmit = async (data: Exam) => {
+  const onExamSubmit = async (data: NewExam) => {
     setExam(data);
-    createExam(data);
+
+    if (!patient || !exam) {
+      console.error("Patient or exam is not defined");
+      return;
+    }
+
+    mutate({
+      patient: patient,
+      exam: exam,
+    });
   };
 
   const renderStepIndicator = () => (
@@ -89,16 +109,13 @@ export default function MultiStepForm() {
         <div>
           <h4 className="font-medium">Información del Paciente</h4>
           <p className="text-sm text-gray-600">
-            {exam?.patient.name} {exam?.patient.firstLastName}{" "}
-            {exam?.patient.secondLastName}
+            {patient?.name} {patient?.firstLastName} {patient?.secondLastName}
           </p>
           <p className="text-sm text-gray-600">
-            {exam?.patient.gender === "male" ? "Masculino" : "Femenino"} |{" "}
-            {exam?.patient.age} años
+            {patient?.gender === "male" ? "Masculino" : "Femenino"} |{" "}
+            {patient?.age} años
           </p>
-          <p className="text-sm text-gray-600">
-            Cama: {exam?.patient.bedNumber}
-          </p>
+          <p className="text-sm text-gray-600">Cama: {patient?.bedNumber}</p>
         </div>
         <div>
           <h4 className="font-medium">Detalles del Examen</h4>
@@ -142,13 +159,13 @@ export default function MultiStepForm() {
         {renderStepIndicator()}
 
         {step === "patient" ? (
-          <PatientForm onSubmit={onPatientSubmit} isLoading={isCreatingExam} />
+          <PatientForm onSubmit={onPatientSubmit} isLoading={isPending} />
         ) : step === "exam" ? (
           patient && (
             <ExamForm
               onSubmit={onExamSubmit}
               onBack={() => setStep("patient")}
-              isLoading={isCreatingExam}
+              isLoading={isPending}
               exam={exam}
               patient={patient}
             />
