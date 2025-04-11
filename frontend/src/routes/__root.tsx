@@ -17,6 +17,9 @@ export const Route = createRootRoute({
       </header>
       <hr />
       <Outlet />
+      <footer className="py-3 text-center text-sm text-muted-foreground absolute bottom-0  left-[50%] translate-x-[-50%]">
+        Made with ❤️ by David Castro
+      </footer>
       <TanStackRouterDevtools />
     </>
   ),
