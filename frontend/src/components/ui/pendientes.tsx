@@ -9,7 +9,7 @@ import { trpc } from "@/utils/trpc";
 
 export default Pendientes;
 
-const ITEMS_PER_PAGE = 4;
+const ITEMS_PER_PAGE = 6;
 
 function Pendientes() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -55,9 +55,6 @@ function Pendientes() {
                     Examen
                   </th>
                   <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                    Servicio
-                  </th>
-                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
                     Fecha
                   </th>
                   <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
@@ -85,10 +82,10 @@ function Pendientes() {
                     </td>
                     <td className="p-4 align-middle">
                       <div className="text-sm">
-                        Cama: {exam.patient?.bedNumber}
+                        Servicio: {exam.patient?.primaryService}
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        Servicio Principal: {exam.patient?.primaryService}
+                      <div className="text-sm">
+                        Cama: {exam.patient?.bedNumber}
                       </div>
                     </td>
                     <td className="p-4 align-middle">
@@ -98,15 +95,12 @@ function Pendientes() {
                       </div>
                     </td>
                     <td className="p-4 align-middle">
-                      <div className="text-sm">{exam.requestingService}</div>
-                    </td>
-                    <td className="p-4 align-middle">
                       <div className="text-sm">
                         {format(exam.requestDate, "PPP", { locale: es })}
                       </div>
                     </td>
                     <td className="p-4 align-middle">
-                      <Badge variant="secondary">Pendiente</Badge>
+                      <Badge variant="purple">Pendiente</Badge>
                     </td>
                   </tr>
                 ))}
