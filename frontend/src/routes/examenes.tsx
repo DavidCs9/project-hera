@@ -11,7 +11,7 @@ function Examenes() {
   const [currentForm, setCurrentForm] = useState<OptionsSubir>("pendientes");
   return (
     <div className="flex flex-col items-center min-h-[calc(100vh-50px)] bg-gradient-to-b from-blue-100 to-blue-200 p-10 gap-10 ">
-      <div className="flex flex-row gap-4 w-full md:max-w-5xl md:mx-auto">
+      <div className="flex flex-col md:flex-row gap-4 w-full md:max-w-5xl md:mx-auto">
         <SidebarSubir currentForm={currentForm} onFormChange={setCurrentForm} />
         <SubirSwitcher currentForm={currentForm} />
       </div>

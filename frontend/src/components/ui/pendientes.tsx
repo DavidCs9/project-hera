@@ -41,76 +41,78 @@ function Pendientes() {
     <div className="space-y-4">
       <div className="rounded-md border bg-card">
         <div className="relative w-full overflow-auto">
-          <table className="w-full caption-bottom text-sm">
-            <thead className="[&_tr]:border-b bg-muted/50">
-              <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                  Paciente
-                </th>
-                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                  Información
-                </th>
-                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                  Examen
-                </th>
-                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                  Servicio
-                </th>
-                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                  Fecha
-                </th>
-                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                  Estado
-                </th>
-              </tr>
-            </thead>
-            <tbody className="[&_tr:last-child]:border-0">
-              {exams?.map((exam) => (
-                <tr
-                  key={exam.id}
-                  className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
-                >
-                  <td className="p-4 align-middle">
-                    <div className="font-medium">
-                      {exam.patient?.name} {exam.patient?.firstLastName}{" "}
-                      {exam.patient?.secondLastName}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {exam.patient?.age} años •{" "}
-                      {exam.patient?.gender === "male"
-                        ? "Masculino"
-                        : "Femenino"}
-                    </div>
-                  </td>
-                  <td className="p-4 align-middle">
-                    <div className="text-sm">
-                      Cama: {exam.patient?.bedNumber}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Servicio Principal: {exam.patient?.primaryService}
-                    </div>
-                  </td>
-                  <td className="p-4 align-middle">
-                    <div className="font-medium">{exam.examType}</div>
-                    <div className="text-sm text-muted-foreground">
-                      Solicitado por: {exam.requestingDoctor}
-                    </div>
-                  </td>
-                  <td className="p-4 align-middle">
-                    <div className="text-sm">{exam.requestingService}</div>
-                  </td>
-                  <td className="p-4 align-middle">
-                    <div className="text-sm">
-                      {format(exam.requestDate, "PPP", { locale: es })}
-                    </div>
-                  </td>
-                  <td className="p-4 align-middle">
-                    <Badge variant="secondary">Pendiente</Badge>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full caption-bottom text-sm">
+              <thead className="[&_tr]:border-b bg-muted/50">
+                <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                    Paciente
+                  </th>
+                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                    Información
+                  </th>
+                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                    Examen
+                  </th>
+                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                    Servicio
+                  </th>
+                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                    Fecha
+                  </th>
+                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                    Estado
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="[&_tr:last-child]:border-0">
+                {exams?.map((exam) => (
+                  <tr
+                    key={exam.id}
+                    className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+                  >
+                    <td className="p-4 align-middle">
+                      <div className="font-medium">
+                        {exam.patient?.name} {exam.patient?.firstLastName}{" "}
+                        {exam.patient?.secondLastName}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {exam.patient?.age} años •{" "}
+                        {exam.patient?.gender === "male"
+                          ? "Masculino"
+                          : "Femenino"}
+                      </div>
+                    </td>
+                    <td className="p-4 align-middle">
+                      <div className="text-sm">
+                        Cama: {exam.patient?.bedNumber}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Servicio Principal: {exam.patient?.primaryService}
+                      </div>
+                    </td>
+                    <td className="p-4 align-middle">
+                      <div className="font-medium">{exam.examType}</div>
+                      <div className="text-sm text-muted-foreground">
+                        Solicitado por: {exam.requestingDoctor}
+                      </div>
+                    </td>
+                    <td className="p-4 align-middle">
+                      <div className="text-sm">{exam.requestingService}</div>
+                    </td>
+                    <td className="p-4 align-middle">
+                      <div className="text-sm">
+                        {format(exam.requestDate, "PPP", { locale: es })}
+                      </div>
+                    </td>
+                    <td className="p-4 align-middle">
+                      <Badge variant="secondary">Pendiente</Badge>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
       {exams?.length === 0 && !isLoading && (
@@ -119,7 +121,7 @@ function Pendientes() {
         </div>
       )}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between pt-4">
+        <div className="flex flex-col sm:flex-row items-center sm:justify-between gap-2 pt-4">
           <div className="text-sm text-muted-foreground">
             Página {currentPage} de {totalPages} ({totalCount} resultados)
           </div>
