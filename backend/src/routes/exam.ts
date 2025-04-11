@@ -2,7 +2,7 @@ import { t } from "../trpc.ts";
 import { exams, patients } from "../db/schema.ts";
 import db from "../db/index.ts";
 import { z } from "zod";
-import { sql, eq } from "drizzle-orm";
+import { sql, eq, count } from "drizzle-orm";
 import { examInputSchema, patientInputSchema } from "../validation/schemas.ts";
 
 export const examRouter = t.router({
@@ -32,29 +32,53 @@ export const examRouter = t.router({
         message: "Exam created successfully",
       };
     }),
-  getPendingExams: t.procedure.query(async () => {
-    return db
-      .select({
-        id: exams.id,
-        examType: exams.examType,
-        requestingService: exams.requestingService,
-        requestingDoctor: exams.requestingDoctor,
-        requestDate: exams.requestDate,
-        status: exams.status,
-        patient: {
-          name: patients.name,
-          firstLastName: patients.firstLastName,
-          secondLastName: patients.secondLastName,
-          age: patients.age,
-          gender: patients.gender,
-          bedNumber: patients.bedNumber,
-          primaryService: patients.primaryService,
-        },
+  getPendingExams: t.procedure
+    .input(
+      z.object({
+        page: z.number().min(1).default(1),
+        limit: z.number().min(1).max(100).default(10),
       })
-      .from(exams)
-      .where(sql`${exams.status} = 'pending'`)
-      .leftJoin(patients, sql`${exams.patientId} = ${patients.id}`);
-  }),
+    )
+    .query(async ({ input }) => {
+      const { page, limit } = input;
+      const offset = (page - 1) * limit;
+
+      const pendingExams = await db
+        .select({
+          id: exams.id,
+          examType: exams.examType,
+          requestingService: exams.requestingService,
+          requestingDoctor: exams.requestingDoctor,
+          requestDate: exams.requestDate,
+          status: exams.status,
+          patient: {
+            name: patients.name,
+            firstLastName: patients.firstLastName,
+            secondLastName: patients.secondLastName,
+            age: patients.age,
+            gender: patients.gender,
+            bedNumber: patients.bedNumber,
+            primaryService: patients.primaryService,
+          },
+        })
+        .from(exams)
+        .where(eq(exams.status, "pending"))
+        .leftJoin(patients, eq(exams.patientId, patients.id))
+        .limit(limit)
+        .offset(offset);
+
+      const totalCountResult = await db
+        .select({ count: count() })
+        .from(exams)
+        .where(eq(exams.status, "pending"));
+
+      const totalCount = totalCountResult[0]?.count ?? 0;
+
+      return {
+        exams: pendingExams,
+        totalCount: totalCount,
+      };
+    }),
   getByFullName: t.procedure
     .input(
       z.object({

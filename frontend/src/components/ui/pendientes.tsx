@@ -1,18 +1,31 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { Loader2 } from "lucide-react";
+import { Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { trpc } from "@/utils/trpc";
 
 export default Pendientes;
 
+const ITEMS_PER_PAGE = 2;
+
 function Pendientes() {
+  const [currentPage, setCurrentPage] = useState(1);
+
   const { data, isLoading, isError } = useQuery({
-    ...trpc.exam.getPendingExams.queryOptions(),
+    ...trpc.exam.getPendingExams.queryOptions({
+      page: currentPage,
+      limit: ITEMS_PER_PAGE,
+    }),
   });
 
-  if (isLoading) {
+  const exams = data?.exams;
+  const totalCount = data?.totalCount ?? 0;
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+
+  if (isLoading && !exams) {
     return (
       <div className="flex items-center justify-center h-64">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -53,7 +66,7 @@ function Pendientes() {
               </tr>
             </thead>
             <tbody className="[&_tr:last-child]:border-0">
-              {data?.map((exam) => (
+              {exams?.map((exam) => (
                 <tr
                   key={exam.id}
                   className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
@@ -101,9 +114,38 @@ function Pendientes() {
           </table>
         </div>
       </div>
-      {data?.length === 0 && (
+      {exams?.length === 0 && !isLoading && (
         <div className="text-center py-8">
           <p className="text-muted-foreground">No hay exámenes pendientes</p>
+        </div>
+      )}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between pt-4">
+          <div className="text-sm text-muted-foreground">
+            Página {currentPage} de {totalPages} ({totalCount} resultados)
+          </div>
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1 || isLoading}
+            >
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              Anterior
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              disabled={currentPage === totalPages || isLoading}
+            >
+              Siguiente
+              <ChevronRight className="h-4 w-4 ml-1" />
+            </Button>
+          </div>
         </div>
       )}
     </div>
