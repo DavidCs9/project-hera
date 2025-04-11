@@ -1,4 +1,34 @@
 services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173" # Map Vite's default port
+    volumes:
+      # Mount local code, excluding node_modules for hot-reloading
+      - ./frontend:/app
+      - /app/node_modules
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      # Mount local code, excluding node_modules for hot-reloading
+      - ./backend:/app
+      - /app/node_modules
+    depends_on:
+      - db
+    environment:
+      # Adjust these environment variables based on your backend's needs
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/doctor_otter
+      - PORT=3000 # Adjust if your backend uses a different port variable
+    restart: unless-stopped
+
   db:
     image: postgres:16-alpine
     ports:
