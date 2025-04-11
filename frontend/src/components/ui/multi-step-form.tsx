@@ -28,10 +28,8 @@ export default function MultiStepForm() {
       // 'data' here is the return value from your tRPC mutation ({ message: ... })
       console.log("Mutation successful:", data.message);
       // Reset state, navigate, show success message, etc.
-      setStep("success");
-      setPatient(undefined); // Clear form state on success
-      setExam(null);
       toast.success("Solicitud creada con éxito");
+      setStep("success");
     },
     onError: (error) => {
       // 'error' here is the TRPCClientErrorLike
@@ -144,6 +142,7 @@ export default function MultiStepForm() {
           onClick={() => {
             setStep("patient");
             setExam(null);
+            setPatient(undefined);
           }}
         >
           Nueva Solicitud

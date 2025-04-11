@@ -14,6 +14,9 @@ export const examRouter = t.router({
       })
     )
     .mutation(async ({ input }) => {
+      if (typeof input.exam.requestDate === "string") {
+        input.exam.requestDate = new Date(input.exam.requestDate);
+      }
       db.transaction(async (tx) => {
         const [patient] = await tx
           .insert(patients)
