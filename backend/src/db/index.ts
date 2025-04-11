@@ -9,8 +9,4 @@ if (!connectionString) {
 
 const db = drizzle(connectionString);
 
-const result = await db.execute("select 1");
-
-console.log(result);
-
 export default db;
