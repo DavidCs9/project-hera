@@ -1,0 +1,37 @@
+# .dockerignore (in monorepo root)
+
+# Git / OS files
+.git
+.gitignore
+.DS_Store
+
+# Docker specific files
+.dockerignore
+docker-compose.yml
+Dockerfile # Prevent copying Dockerfiles themselves unless needed inside
+*/Dockerfile # Prevent copying nested Dockerfiles
+
+# Node modules (pnpm install will handle this inside the container)
+node_modules
+*/node_modules
+
+# Build artifacts (adjust as needed)
+dist
+*/dist
+.next
+*/.next
+build
+*/build
+
+# IDE / Editor specific
+.vscode
+.idea
+
+# Logs / Env files
+*.log
+.env
+.env.*
+!.env.example # You might want to include examples
+
+# Other project specific ignores
+coverage

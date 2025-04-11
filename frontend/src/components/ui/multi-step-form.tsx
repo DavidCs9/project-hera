@@ -6,9 +6,11 @@ import ExamForm from "@/components/forms/ExamForm";
 import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { NewExam, NewPatient } from "../../../../backend/src/db/schema";
 import { trpc } from "@/utils/trpc";
-
+import {
+  type NewExam,
+  type NewPatient,
+} from "../../../../backend/src/validation/schemas";
 export default function MultiStepForm() {
   const [step, setStep] = useState<"patient" | "exam" | "success">("patient");
   const [exam, setExam] = useState<NewExam | null>(null);

@@ -21,7 +21,6 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.41.0",
-    "drizzle-zod": "^0.7.1",
     "express": "^5.1.0",
     "pg": "^8.14.1",
     "superjson": "^2.2.2",

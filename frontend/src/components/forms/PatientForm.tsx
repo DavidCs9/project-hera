@@ -18,9 +18,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  NewPatient,
-  patientInsertSchema,
-} from "../../../../backend/src/db/schema";
+  type NewPatient,
+  patientInputSchema,
+} from "../../../../backend/src/validation/schemas";
 
 export default PatientForm;
 
@@ -32,7 +32,7 @@ interface PatientFormProps {
 
 function PatientForm({ onSubmit }: PatientFormProps) {
   const form = useForm<NewPatient>({
-    resolver: zodResolver(patientInsertSchema),
+    resolver: zodResolver(patientInputSchema),
     mode: "onChange",
     defaultValues: {
       firstLastName: "",

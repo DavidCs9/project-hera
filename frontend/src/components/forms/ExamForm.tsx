@@ -17,12 +17,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  NewPatient,
-  NewExam,
-  examInsertSchema,
-} from "../../../../backend/src/db/schema";
 
+import {
+  examInputSchema,
+  NewExam,
+  NewPatient,
+} from "../../../../backend/src/validation/schemas";
 interface ExamFormProps {
   onSubmit: (data: NewExam) => void;
   onBack: () => void;
@@ -38,7 +38,7 @@ export default function ExamForm({
   isLoading = false,
 }: ExamFormProps) {
   const form = useForm<NewExam>({
-    resolver: zodResolver(examInsertSchema),
+    resolver: zodResolver(examInputSchema),
     defaultValues: {
       patientId: 1,
       requestingService: patient?.primaryService || "",

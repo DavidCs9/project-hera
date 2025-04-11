@@ -1,20 +1,16 @@
 import { t } from "../trpc.ts";
-import {
-  exams,
-  examInsertSchema,
-  patientInsertSchema,
-  patients,
-} from "../db/schema.ts";
+import { exams, patients } from "../db/schema.ts";
 import db from "../db/index.ts";
 import { z } from "zod";
 import { sql, eq } from "drizzle-orm";
+import { examInputSchema, patientInputSchema } from "../validation/schemas.ts";
 
 export const examRouter = t.router({
   create: t.procedure
     .input(
       z.object({
-        patient: patientInsertSchema,
-        exam: examInsertSchema,
+        patient: patientInputSchema,
+        exam: examInputSchema,
       })
     )
     .mutation(async ({ input }) => {

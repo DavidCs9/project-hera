@@ -1,14 +1,16 @@
 services:
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./frontend/Dockerfile
     ports:
       - "5173:5173" # Map Vite's default port
     volumes:
-      # Mount local code, excluding node_modules for hot-reloading
-      - ./frontend:/app
-      - /app/node_modules
+      # Mount local frontend code into the correct location within the container
+      - ./frontend:/app/frontend
+      # Use an anonymous volume to persist/hide the node_modules installed during build
+      # This prevents the host node_modules (if any) from overwriting the container's
+      - /app/frontend/node_modules
     restart: unless-stopped
 
   backend:
