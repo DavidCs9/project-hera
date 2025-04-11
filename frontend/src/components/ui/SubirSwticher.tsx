@@ -1,5 +1,3 @@
-"use client";
-
 import { OptionsSubir } from "./sidebarSubir";
 import Pendientes from "./pendientes";
 
