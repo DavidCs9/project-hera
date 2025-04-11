@@ -50,6 +50,31 @@ app.post("/testCreateExam", async (req, res) => {
   }
 });
 
+app.get("/testGetPendingExams", async (req, res) => {
+  try {
+    const pendingExams = await caller.exam.getPendingExams();
+    res.json(pendingExams);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.get("/testGetByFullName", async (req, res) => {
+  try {
+    const fullName = {
+      name: "John",
+      firstLastName: "Doe",
+      secondLastName: "Smith",
+    };
+    const result = await caller.exam.getByFullName(fullName);
+    res.json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 const port = 3000;
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
