@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import SidebarSubir, { OptionsSubir } from "@/components/ui/sidebarSubir";
-import SubirSwitcher from "@/components/ui/SubirSwticher";
+import SubirSwitcher from "@/components/ui/SubirSwitcher";
 import { useState } from "react";
 
 export const Route = createFileRoute("/examenes")({

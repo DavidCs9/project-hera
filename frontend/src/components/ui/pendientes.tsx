@@ -27,7 +27,7 @@ function Pendientes() {
 
   if (isLoading && !exams) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className="flex items-center justify-center h-64 w-full">
         <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     );
@@ -121,7 +121,7 @@ function Pendientes() {
         </div>
       )}
       {totalPages > 1 && (
-        <div className="flex flex-col sm:flex-row items-center sm:justify-between gap-2 pt-4">
+        <div className="flex flex-col sm:flex-row items-center sm:justify-between gap-2 ">
           <div className="text-sm text-muted-foreground">
             Página {currentPage} de {totalPages} ({totalCount} resultados)
           </div>
