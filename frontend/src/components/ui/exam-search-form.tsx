@@ -21,15 +21,21 @@ import { trpc } from "@/utils/trpc";
 export default ExamSearchForm;
 
 const searchFormSchema = z.object({
-  firstLastName: z.string({
-    required_error: "El apellido paterno es requerido",
-  }),
-  secondLastName: z.string({
-    required_error: "El apellido materno es requerido",
-  }),
-  names: z.string({
-    required_error: "El nombre es requerido",
-  }),
+  firstLastName: z
+    .string({
+      required_error: "El apellido paterno es requerido",
+    })
+    .min(1, "El apellido paterno es requerido"),
+  secondLastName: z
+    .string({
+      required_error: "El apellido materno es requerido",
+    })
+    .min(1, "El apellido materno es requerido"),
+  names: z
+    .string({
+      required_error: "El nombre es requerido",
+    })
+    .min(1, "El nombre es requerido"),
 });
 
 type SearchFormValues = z.infer<typeof searchFormSchema>;
@@ -199,7 +205,7 @@ function ExamSearchForm() {
             )
           )}
 
-        {!isLoading && !isError && !data && searchParams && (
+        {!isLoading && !isError && data?.length === 0 && searchParams && (
           <Alert className="mt-4">
             <AlertDescription className="flex items-center gap-2">
               <AlertCircle className="h-4 w-4" />
