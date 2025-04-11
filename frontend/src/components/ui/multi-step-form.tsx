@@ -14,7 +14,7 @@ import {
 export default function MultiStepForm() {
   const [step, setStep] = useState<"patient" | "exam" | "success">("patient");
   const [exam, setExam] = useState<NewExam | null>(null);
-  const [patient, setPatient] = useState<NewPatient>();
+  const [patient, setPatient] = useState<NewPatient | null>(null);
 
   // --- Corrected useMutation setup ---
   const {
@@ -32,10 +32,8 @@ export default function MultiStepForm() {
       setStep("success");
     },
     onError: (error) => {
-      // 'error' here is the TRPCClientErrorLike
       console.error("Mutation failed:", error);
       toast.error("Error al crear la solicitud");
-      // Display an error message to the user
     },
   });
 
@@ -45,17 +43,15 @@ export default function MultiStepForm() {
   };
 
   const onExamSubmit = async (data: NewExam) => {
-    setExam(data);
-
-    if (!patient || !exam) {
-      console.error("Patient or exam is not defined");
+    if (!patient) {
+      console.error("Patient is not defined");
       return;
     }
-
     mutate({
       patient: patient,
-      exam: exam,
+      exam: data,
     });
+    setExam(data);
   };
 
   const renderStepIndicator = () => (
@@ -142,7 +138,7 @@ export default function MultiStepForm() {
           onClick={() => {
             setStep("patient");
             setExam(null);
-            setPatient(undefined);
+            setPatient(null);
           }}
         >
           Nueva Solicitud
