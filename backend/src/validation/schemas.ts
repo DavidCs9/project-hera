@@ -6,6 +6,7 @@ const spanishMessages = {
   invalidType: "Tipo de dato inválido",
   invalidEnum: "Valor no válido",
   select: "Seleccione una opción",
+  minBedNumber: "El número mínimo es 1",
 };
 
 // Manual Zod schema for inserting/updating patients (combine if needed)
@@ -21,10 +22,9 @@ export const patientInputSchema = z.object({
   }),
   bedNumber: z
     .number({ invalid_type_error: spanishMessages.invalidType })
-    .min(1, spanishMessages.required),
-  primaryService: z.string().min(1, spanishMessages.select), // Use 'select' if it's a dropdown
+    .min(1, spanishMessages.minBedNumber),
+  primaryService: z.string().min(1, spanishMessages.select),
 });
-// You might want separate schemas for insert vs select if fields differ significantly (e.g., ID)
 
 // Manual Zod schema for inserting/updating exams
 export const examInputSchema = z.object({
