@@ -19,9 +19,30 @@ app.use(
 const caller = appRouter.createCaller({});
 
 // --- HTTP Wrappers ---
-app.get("/hello", async (req, res) => {
+app.post("/testCreateExam", async (req, res) => {
   try {
-    const result = await caller.general.hello("Alecita Doe");
+    const body = {
+      patient: {
+        name: "John",
+        firstLastName: "Doe",
+        secondLastName: "Smith",
+        age: 45,
+        gender: "male" as const,
+        bedNumber: 101,
+        primaryService: "Cardiology",
+      },
+      exam: {
+        patientId: 1,
+        examType: "ECG",
+        requestingService: "Cardiology",
+        requestingDoctor: "Dr. House",
+        requestDate: new Date("2024-01-01T10:00:00.000Z"),
+        result: "Normal sinus rhythm",
+        status: "pending" as const,
+      },
+    };
+
+    const result = await caller.exam.create(body);
     res.json(result);
   } catch (error) {
     console.error(error);
