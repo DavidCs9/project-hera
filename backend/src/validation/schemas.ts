@@ -34,15 +34,10 @@ export const examInputSchema = z.object({
   examType: z.string().min(1, spanishMessages.required),
   requestingService: z.string().min(1, spanishMessages.required),
   requestingDoctor: z.string().min(1, spanishMessages.required),
-  requestDate: z.preprocess(
-    (arg) => {
-      if (typeof arg == "string" || arg instanceof Date) return new Date(arg);
-    },
-    z.date({
-      required_error: spanishMessages.required,
-      invalid_type_error: spanishMessages.invalidType,
-    })
-  ),
+  requestDate: z.date({
+    required_error: spanishMessages.required,
+    invalid_type_error: spanishMessages.invalidType,
+  }),
   status: z.enum(["pending", "completed"], {
     errorMap: () => ({ message: spanishMessages.invalidEnum }),
   }),
