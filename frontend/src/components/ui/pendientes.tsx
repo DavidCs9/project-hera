@@ -9,7 +9,7 @@ import { trpc } from "@/utils/trpc";
 
 export default Pendientes;
 
-const ITEMS_PER_PAGE = 2;
+const ITEMS_PER_PAGE = 4;
 
 function Pendientes() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -39,7 +39,6 @@ function Pendientes() {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold tracking-tight">Exámenes Pendientes</h2>
       <div className="rounded-md border bg-card">
         <div className="relative w-full overflow-auto">
           <table className="w-full caption-bottom text-sm">
