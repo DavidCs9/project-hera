@@ -38,7 +38,7 @@ function Pendientes() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 w-full">
       <div className="rounded-md border bg-card">
         <div className="relative w-full overflow-auto">
           <div className="overflow-x-auto">
@@ -55,7 +55,7 @@ function Pendientes() {
                     Examen
                   </th>
                   <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                    Fecha
+                    Fecha de Solicitud
                   </th>
                   <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
                     Estado
@@ -84,7 +84,7 @@ function Pendientes() {
                       <div className="text-sm">
                         Servicio: {exam.patient?.primaryService}
                       </div>
-                      <div className="text-sm">
+                      <div className="text-sm text-muted-foreground">
                         Cama: {exam.patient?.bedNumber}
                       </div>
                     </td>
