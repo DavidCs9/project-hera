@@ -80,10 +80,7 @@ function Pendientes() {
                     Fecha de Solicitud
                   </th>
                   <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                    Estado
-                  </th>
-                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                    Acciones
+                    Estado y Acciones
                   </th>
                 </tr>
               </thead>
@@ -107,7 +104,14 @@ function Pendientes() {
                     </td>
                     <td className="p-4 align-middle">
                       <div className="text-sm">
-                        Servicio: {exam.patient?.primaryService}
+                        Servicio:{" "}
+                        {exam.patient?.primaryService === "urology"
+                          ? "Urología"
+                          : exam.patient?.primaryService === "hematology"
+                          ? "Hematología"
+                          : exam.patient?.primaryService === "cardiology"
+                          ? "Cardiología"
+                          : exam.patient?.primaryService}
                       </div>
                       <div className="text-sm text-muted-foreground">
                         Cama: {exam.patient?.bedNumber}
@@ -125,16 +129,16 @@ function Pendientes() {
                       </div>
                     </td>
                     <td className="p-4 align-middle">
-                      <Badge variant="pending">Pendiente</Badge>
-                    </td>
-                    <td className="p-4 align-middle">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setSelectedExam(exam)}
-                      >
-                        Subir Resultado
-                      </Button>
+                      <div className="flex items-center gap-2 flex-col">
+                        <Badge variant="pending">Pendiente</Badge>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setSelectedExam(exam)}
+                        >
+                          Subir Resultado
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 ))}
