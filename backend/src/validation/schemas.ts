@@ -14,11 +14,11 @@ export const patientInputSchema = z.object({
   firstLastName: z.string().min(1, spanishMessages.required),
   secondLastName: z.string().min(1, spanishMessages.required),
   age: z
-    .number({ error: spanishMessages.invalidType })
+    .number({ invalid_type_error: spanishMessages.invalidType })
     .min(0, spanishMessages.required), // Use number() for zod
   gender: z.enum(["male", "female"]),
   bedNumber: z
-    .number({ error: spanishMessages.invalidType })
+    .number({ invalid_type_error: spanishMessages.invalidType })
     .min(1, spanishMessages.minBedNumber),
   primaryService: z.string().min(1, spanishMessages.select),
 });
@@ -26,13 +26,13 @@ export const patientInputSchema = z.object({
 // Manual Zod schema for inserting/updating exams
 export const examInputSchema = z.object({
   patientId: z
-    .number({ error: spanishMessages.invalidType })
+    .number({ invalid_type_error: spanishMessages.invalidType })
     .min(1, spanishMessages.required),
   examType: z.string().min(1, spanishMessages.required),
   requestingService: z.string().min(1, spanishMessages.required),
   requestingDoctor: z.string().min(1, spanishMessages.required),
   requestDate: z.date({
-    error: spanishMessages.required,
+    required_error: spanishMessages.required,
   }),
   status: z.enum(["pending", "completed"]),
   result: z.string().optional(),
@@ -42,11 +42,11 @@ export const examInputSchema = z.object({
 export const fileUploadSchema = z.object({
   examId: z.number().positive(),
   file: z
-    .file()
-    .refine((file) => file.type === "application/pdf", {
+    .instanceof(File)
+    .refine((file: File) => file.type === "application/pdf", {
       message: "Solo se permiten archivos PDF",
     })
-    .refine((file) => file.size <= 5 * 1024 * 1024, {
+    .refine((file: File) => file.size <= 5 * 1024 * 1024, {
       message: "El archivo no debe superar los 5MB",
     }),
 });
