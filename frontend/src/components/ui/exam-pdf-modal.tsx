@@ -30,13 +30,7 @@ export function ExamPdfModal({ exam, isOpen, onClose }: ExamPdfModalProps) {
 
   const handleDownload = () => {
     if (!pdfUrl?.presignedUrl) return;
-
-    const link = document.createElement("a");
-    link.href = pdfUrl.presignedUrl;
-    link.download = `examen-${exam.id}.pdf`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    window.open(pdfUrl.presignedUrl, "_blank");
   };
 
   return (
