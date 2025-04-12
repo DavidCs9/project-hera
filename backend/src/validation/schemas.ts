@@ -39,19 +39,19 @@ export const examInputSchema = z.object({
   resultDate: z.date().optional().nullable(),
 });
 
-export const fileUploadSchema = z.object({
+export const generateUploadUrlSchema = z.object({
   examId: z.number().positive(),
-  file: z
-    .instanceof(File)
-    .refine((file: File) => file.type === "application/pdf", {
-      message: "Solo se permiten archivos PDF",
-    })
-    .refine((file: File) => file.size <= 5 * 1024 * 1024, {
-      message: "El archivo no debe superar los 5MB",
-    }),
+  fileName: z.string(),
+  contentType: z.string(),
+});
+
+export const uploadResultSchema = z.object({
+  examId: z.number().positive(),
+  s3Key: z.string(),
 });
 
 //  types
 export type NewPatient = z.infer<typeof patientInputSchema>;
 export type NewExam = z.infer<typeof examInputSchema>;
-export type FileUpload = z.infer<typeof fileUploadSchema>;
+export type GenerateUploadUrl = z.infer<typeof generateUploadUrlSchema>;
+export type UploadResult = z.infer<typeof uploadResultSchema>;

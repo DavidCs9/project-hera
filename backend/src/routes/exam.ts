@@ -6,10 +6,12 @@ import { sql, eq, count } from "drizzle-orm";
 import {
   examInputSchema,
   patientInputSchema,
-  fileUploadSchema,
+  generateUploadUrlSchema,
+  uploadResultSchema,
 } from "../validation/schemas.ts";
 import { s3Client, S3_BUCKET_NAME } from "../config/s3.ts";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 export const examRouter = t.router({
   create: t.procedure
@@ -122,32 +124,32 @@ export const examRouter = t.router({
           }) ILIKE ${`%${input.name} ${input.firstLastName} ${input.secondLastName}%`}`
         );
     }),
-  uploadResult: t.procedure
-    .input(fileUploadSchema)
+  generateUploadUrl: t.procedure
+    .input(generateUploadUrlSchema)
     .mutation(async ({ input }) => {
-      const { examId, file } = input;
+      const { examId, fileName, contentType } = input;
+      const key = `exams/${examId}/${Date.now()}-${fileName}`;
 
-      // 1. Read the File object into an ArrayBuffer, then convert to Buffer
-      const fileBuffer = Buffer.from(await file.arrayBuffer());
-
-      // 2. Use file properties for key and content type
-      const key = `exams/${examId}/${Date.now()}-${file.name}`;
-      const contentType = file.type || "application/pdf"; // Use file's type, fallback
-
-      // Create the S3 upload command
       const command = new PutObjectCommand({
         Bucket: S3_BUCKET_NAME,
         Key: key,
-        ContentType: contentType, // Use dynamic content type
-        Body: fileBuffer, // Pass the Buffer directly
-        ContentLength: fileBuffer.length, // Good practice to provide length
+        ContentType: contentType,
       });
 
-      // Upload the file to S3
-      await s3Client.send(command);
+      const presignedUrl = await getSignedUrl(s3Client, command, {
+        expiresIn: 3600, // URL expires in 1 hour
+      });
 
-      // Generate the S3 URL
-      const s3Url = `https://${S3_BUCKET_NAME}.s3.amazonaws.com/${key}`;
+      return {
+        presignedUrl,
+        key,
+      };
+    }),
+  uploadResult: t.procedure
+    .input(uploadResultSchema)
+    .mutation(async ({ input }) => {
+      const { examId, s3Key } = input;
+      const s3Url = `https://${S3_BUCKET_NAME}.s3.amazonaws.com/${s3Key}`;
 
       // Update the exam record
       await db
@@ -160,7 +162,7 @@ export const examRouter = t.router({
         .where(eq(exams.id, examId));
 
       return {
-        message: "File uploaded successfully",
+        message: "Exam updated successfully",
         url: s3Url,
       };
     }),

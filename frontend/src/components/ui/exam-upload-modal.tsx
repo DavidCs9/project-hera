@@ -1,5 +1,4 @@
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { trpc } from "@/utils/trpc";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,14 +16,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Loader2, Upload } from "lucide-react";
+import { Upload } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { useMutation } from "@tanstack/react-query";
-import {
-  FileUpload,
-  fileUploadSchema,
-} from "../../../../backend/src/validation/schemas";
 import { toast } from "sonner";
 import { PendingExam } from "./pendientes";
 
@@ -39,31 +34,55 @@ export function ExamUploadModal({
   isOpen,
   onClose,
 }: ExamUploadModalProps) {
-  const form = useForm<FileUpload>({
-    resolver: zodResolver(fileUploadSchema),
+  const form = useForm({
     defaultValues: {
-      examId: exam.id,
+      file: null as File | null,
     },
   });
 
-  const { mutate, isPending } = useMutation({
+  const generateUrl = useMutation({
+    ...trpc.exam.generateUploadUrl.mutationOptions(),
+  });
+
+  const updateExam = useMutation({
     ...trpc.exam.uploadResult.mutationOptions(),
-    onSuccess: (data) => {
-      console.log("Mutation successful:", data.message);
-      toast.success("Resultado subido con éxito");
-    },
-    onError: (error) => {
-      console.error("Mutation failed:", error);
-    },
   });
 
-  const onSubmit = async (data: FileUpload) => {
+  const onSubmit = async (data: { file: File | null }) => {
+    if (!data.file) return;
+
     try {
-      mutate(data);
+      // 1. Get presigned URL from server
+      const { presignedUrl, key } = await generateUrl.mutateAsync({
+        examId: exam.id,
+        fileName: data.file.name,
+        contentType: data.file.type,
+      });
+
+      // 2. Upload file directly to S3 using presigned URL
+      const response = await fetch(presignedUrl, {
+        method: "PUT",
+        body: data.file,
+        headers: {
+          "Content-Type": data.file.type,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to upload file to S3");
+      }
+
+      // 3. Update exam record with S3 URL
+      await updateExam.mutateAsync({
+        examId: exam.id,
+        s3Key: key,
+      });
+
+      toast.success("Resultado subido con éxito");
       onClose();
-      // You might want to trigger a refetch of the pending exams here
     } catch (error) {
       console.error("Error uploading file:", error);
+      toast.error("Error al subir el archivo");
     }
   };
 
@@ -132,19 +151,16 @@ export function ExamUploadModal({
               <Button
                 type="submit"
                 className="w-full"
-                disabled={isPending || !form.formState.isValid}
+                disabled={
+                  generateUrl.isPending ||
+                  updateExam.isPending ||
+                  !form.formState.isValid
+                }
               >
-                {isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Subiendo...
-                  </>
-                ) : (
-                  <>
-                    <Upload className="mr-2 h-4 w-4" />
-                    Subir Resultado
-                  </>
-                )}
+                <>
+                  <Upload className="mr-2 h-4 w-4" />
+                  Subir Resultado
+                </>
               </Button>
             </form>
           </Form>
