@@ -80,7 +80,7 @@ function Pendientes() {
                     Fecha de Solicitud
                   </th>
                   <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                    Estado y Acciones
+                    Estado
                   </th>
                 </tr>
               </thead>
@@ -88,7 +88,8 @@ function Pendientes() {
                 {exams?.map((exam) => (
                   <tr
                     key={exam.id}
-                    className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+                    className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted cursor-pointer"
+                    onClick={() => setSelectedExam(exam)}
                   >
                     <td className="p-4 align-middle">
                       <div className="font-medium">
@@ -129,16 +130,7 @@ function Pendientes() {
                       </div>
                     </td>
                     <td className="p-4 align-middle">
-                      <div className="flex items-center gap-2 flex-col">
-                        <Badge variant="pending">Pendiente</Badge>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setSelectedExam(exam)}
-                        >
-                          Subir Resultado
-                        </Button>
-                      </div>
+                      <Badge variant="pending">Pendiente</Badge>
                     </td>
                   </tr>
                 ))}
