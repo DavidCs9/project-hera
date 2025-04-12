@@ -3,7 +3,13 @@ import { exams, patients } from "../db/schema.ts";
 import db from "../db/index.ts";
 import { z } from "zod";
 import { sql, eq, count } from "drizzle-orm";
-import { examInputSchema, patientInputSchema } from "../validation/schemas.ts";
+import {
+  examInputSchema,
+  patientInputSchema,
+  fileUploadSchema,
+} from "../validation/schemas.ts";
+import { s3Client, S3_BUCKET_NAME } from "../config/s3.ts";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
 
 export const examRouter = t.router({
   create: t.procedure
@@ -115,6 +121,43 @@ export const examRouter = t.router({
             patients.secondLastName
           }) ILIKE ${`%${input.name} ${input.firstLastName} ${input.secondLastName}%`}`
         );
+    }),
+  uploadResult: t.procedure
+    .input(fileUploadSchema)
+    .mutation(async ({ input }) => {
+      const { examId, file } = input;
+
+      // Generate a unique key for the S3 object
+      const key = `exams/${examId}/${Date.now()}-${file.name}`;
+
+      // Create the S3 upload command
+      const command = new PutObjectCommand({
+        Bucket: S3_BUCKET_NAME,
+        Key: key,
+        ContentType: "application/pdf",
+        Body: file,
+      });
+
+      // Upload the file to S3
+      await s3Client.send(command);
+
+      // Generate the S3 URL
+      const s3Url = `https://${S3_BUCKET_NAME}.s3.amazonaws.com/${key}`;
+
+      // Update the exam record
+      await db
+        .update(exams)
+        .set({
+          status: "completed",
+          result: s3Url,
+          resultDate: new Date(),
+        })
+        .where(eq(exams.id, examId));
+
+      return {
+        message: "File uploaded successfully",
+        url: s3Url,
+      };
     }),
 });
 

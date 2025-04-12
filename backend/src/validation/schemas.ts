@@ -39,6 +39,13 @@ export const examInputSchema = z.object({
   resultDate: z.date().optional().nullable(),
 });
 
+export const fileUploadSchema = z.object({
+  examId: z.number().positive(),
+  file: z.file().refine((file) => file.type === "application/pdf", {
+    message: "Only PDF files are allowed",
+  }),
+});
+
 //  types
 export type NewPatient = z.infer<typeof patientInputSchema>;
 export type NewExam = z.infer<typeof examInputSchema>;
