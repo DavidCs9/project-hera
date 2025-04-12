@@ -52,7 +52,10 @@ app.post("/testCreateExam", async (req, res) => {
 
 app.get("/testGetPendingExams", async (req, res) => {
   try {
-    const pendingExams = await caller.exam.getPendingExams();
+    const pendingExams = await caller.exam.getPendingExams({
+      page: 1,
+      limit: 10,
+    });
     res.json(pendingExams);
   } catch (error) {
     console.error(error);
