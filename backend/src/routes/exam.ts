@@ -127,15 +127,20 @@ export const examRouter = t.router({
     .mutation(async ({ input }) => {
       const { examId, file } = input;
 
-      // Generate a unique key for the S3 object
+      // 1. Read the File object into an ArrayBuffer, then convert to Buffer
+      const fileBuffer = Buffer.from(await file.arrayBuffer());
+
+      // 2. Use file properties for key and content type
       const key = `exams/${examId}/${Date.now()}-${file.name}`;
+      const contentType = file.type || "application/pdf"; // Use file's type, fallback
 
       // Create the S3 upload command
       const command = new PutObjectCommand({
         Bucket: S3_BUCKET_NAME,
         Key: key,
-        ContentType: "application/pdf",
-        Body: file,
+        ContentType: contentType, // Use dynamic content type
+        Body: fileBuffer, // Pass the Buffer directly
+        ContentLength: fileBuffer.length, // Good practice to provide length
       });
 
       // Upload the file to S3

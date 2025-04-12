@@ -3,7 +3,8 @@ import express from "express";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import cors from "cors";
 import { appRouter } from "./routes/index.js";
-
+import path from "path";
+import fs from "fs";
 const app = express();
 app.use(cors());
 app.use(express.json()); // Important for parsing request bodies
@@ -71,6 +72,27 @@ app.get("/testGetByFullName", async (req, res) => {
       secondLastName: "Smith",
     };
     const result = await caller.exam.getByFullName(fullName);
+    res.json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.post("/testUploadResult", async (req, res) => {
+  try {
+    // Get the current directory path
+    const __dirname = path.dirname(new URL(import.meta.url).pathname);
+
+    // Read the dummy.pdf file
+    const filePath = path.join(__dirname, "..", "dummy.pdf");
+    const fileBuffer = fs.readFileSync(filePath);
+
+    const body = {
+      examId: 1,
+      file: new File([fileBuffer], "dummy.pdf", { type: "application/pdf" }),
+    };
+    const result = await caller.exam.uploadResult(body);
     res.json(result);
   } catch (error) {
     console.error(error);
