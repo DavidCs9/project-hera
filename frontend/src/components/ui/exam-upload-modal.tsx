@@ -22,21 +22,29 @@ import { es } from "date-fns/locale";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { PendingExam } from "./pendientes";
-
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 type ExamUploadModalProps = {
   exam: PendingExam;
   isOpen: boolean;
   onClose: () => void;
 };
 
+const examInputSchema = z.object({
+  file: z.instanceof(File, {
+    message: "Por favor selecciona un archivo PDF para subir",
+  }),
+});
+
 export function ExamUploadModal({
   exam,
   isOpen,
   onClose,
 }: ExamUploadModalProps) {
-  const form = useForm({
+  const form = useForm<z.infer<typeof examInputSchema>>({
+    resolver: zodResolver(examInputSchema),
     defaultValues: {
-      file: null as File | null,
+      file: undefined,
     },
   });
 
@@ -159,11 +167,7 @@ export function ExamUploadModal({
               <Button
                 type="submit"
                 className="w-full"
-                disabled={
-                  generateUrl.isPending ||
-                  updateExam.isPending ||
-                  !form.formState.isValid
-                }
+                disabled={generateUrl.isPending || updateExam.isPending}
               >
                 {generateUrl.isPending || updateExam.isPending ? (
                   <>
