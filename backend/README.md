@@ -13,6 +13,7 @@ This is a Node.js backend application built with Express, using tRPC for API end
 - **ORM**: Drizzle
 - **Validation**: Zod
 - **Package Manager**: pnpm
+- **Storage**: AWS S3
 
 ## Project Structure
 
@@ -69,6 +70,11 @@ The application requires the following environment variables (configured in `.en
 
 - Database connection details
 - Server configuration
+- AWS S3 configuration:
+  - `AWS_ACCESS_KEY_ID`: AWS access key
+  - `AWS_SECRET_ACCESS_KEY`: AWS secret access key
+  - `AWS_REGION`: AWS region
+  - `S3_BUCKET_NAME`: S3 bucket name
 
 ## Development
 
@@ -78,7 +84,7 @@ The application requires the following environment variables (configured in `.en
    pnpm install
    ```
 
-2. Set up environment variables in `.env`
+2. Set up environment variables in `.env` including AWS S3 credentials
 
 3. Start development server:
    ```bash
