@@ -29,7 +29,7 @@ export default function Completados() {
 
   const exams = data?.exams;
   const totalCount = data?.totalCount ?? 0;
-  const totalPages = Math.ceil(totalCount / 10);
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   // Filter exams based on search query
   const filteredExams = useMemo(() => {
