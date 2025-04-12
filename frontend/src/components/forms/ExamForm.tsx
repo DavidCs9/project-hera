@@ -45,6 +45,8 @@ export default function ExamForm({
       requestDate: new Date(),
       resultDate: null,
       status: "pending",
+      requestingDoctor: "",
+      examType: "",
     },
   });
 
