@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { trpc } from "@/utils/trpc";
+import { queryClient, trpc } from "@/utils/trpc";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -16,7 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Upload } from "lucide-react";
+import { Loader2, Upload } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { useMutation } from "@tanstack/react-query";
@@ -76,6 +76,14 @@ export function ExamUploadModal({
       await updateExam.mutateAsync({
         examId: exam.id,
         s3Key: key,
+      });
+
+      // 4. Invalidate the query
+      queryClient.invalidateQueries({
+        queryKey: trpc.exam.getPendingExams.queryOptions({
+          page: 1,
+          limit: 6,
+        }).queryKey,
       });
 
       toast.success("Resultado subido con éxito");
@@ -157,10 +165,17 @@ export function ExamUploadModal({
                   !form.formState.isValid
                 }
               >
-                <>
-                  <Upload className="mr-2 h-4 w-4" />
-                  Subir Resultado
-                </>
+                {generateUrl.isPending || updateExam.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Subiendo...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="mr-2 h-4 w-4" />
+                    Subir Resultado
+                  </>
+                )}
               </Button>
             </form>
           </Form>
