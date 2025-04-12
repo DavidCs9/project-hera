@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { ExamPdfModal } from "./exam-pdf-modal";
 import { trpc } from "@/utils/trpc";
 import { format } from "date-fns";
@@ -67,16 +67,21 @@ export default function Completados() {
                   <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
                     Estado
                   </th>
-                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                    Acciones
-                  </th>
                 </tr>
               </thead>
               <tbody className="[&_tr:last-child]:border-0">
                 {exams?.map((exam) => (
                   <tr
                     key={exam.id}
-                    className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+                    className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted cursor-pointer"
+                    onClick={() =>
+                      setSelectedExam({
+                        id: exam.id,
+                        examType: exam.examType,
+                        result: exam.result!,
+                        resultDate: exam.resultDate!,
+                      })
+                    }
                   >
                     <td className="p-4 align-middle">
                       <div className="font-medium">
@@ -125,23 +130,6 @@ export default function Completados() {
                     </td>
                     <td className="p-4 align-middle">
                       <Badge variant="success">Completado</Badge>
-                    </td>
-                    <td className="p-4 align-middle">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() =>
-                          setSelectedExam({
-                            id: exam.id,
-                            examType: exam.examType,
-                            result: exam.result!,
-                            resultDate: exam.resultDate!,
-                          })
-                        }
-                      >
-                        <FileText className="h-4 w-4 mr-2" />
-                        Ver Resultado
-                      </Button>
                     </td>
                   </tr>
                 ))}
