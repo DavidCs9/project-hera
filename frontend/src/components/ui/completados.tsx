@@ -1,16 +1,18 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Loader2, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { ExamPdfModal } from "./exam-pdf-modal";
 import { trpc } from "@/utils/trpc";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
 export default function Completados() {
-  const ITEMS_PER_PAGE = 6;
+  const ITEMS_PER_PAGE = 5;
   const [page, setPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedExam, setSelectedExam] = useState<{
     id: number;
     examType: string;
@@ -29,6 +31,20 @@ export default function Completados() {
   const totalCount = data?.totalCount ?? 0;
   const totalPages = Math.ceil(totalCount / 10);
 
+  // Filter exams based on search query
+  const filteredExams = useMemo(() => {
+    if (!exams) return [];
+    if (!searchQuery) return exams;
+
+    const query = searchQuery.toLowerCase();
+    return exams.filter((exam) => {
+      if (!exam.patient) return false;
+      const fullName =
+        `${exam.patient.name} ${exam.patient.firstLastName} ${exam.patient.secondLastName}`.toLowerCase();
+      return fullName.includes(query);
+    });
+  }, [exams, searchQuery]);
+
   if (isLoading && !exams) {
     return (
       <div className="flex items-center justify-center h-64 w-full">
@@ -43,6 +59,17 @@ export default function Completados() {
 
   return (
     <div className="space-y-4 w-full">
+      <div className="flex items-center space-x-2">
+        <div className="relative flex-1">
+          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Buscar por nombre de paciente..."
+            className="pl-8"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+      </div>
       <div className="rounded-md border bg-card">
         <div className="relative w-full overflow-auto">
           <div className="overflow-x-auto">
@@ -70,7 +97,7 @@ export default function Completados() {
                 </tr>
               </thead>
               <tbody className="[&_tr:last-child]:border-0">
-                {exams?.map((exam) => (
+                {filteredExams.map((exam) => (
                   <tr
                     key={exam.id}
                     className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted cursor-pointer"
@@ -117,14 +144,18 @@ export default function Completados() {
                       </div>
                     </td>
                     <td className="p-4 align-middle">
-                      <div className="text-sm">
-                        {format(exam.requestDate, "PPP", { locale: es })}
+                      <div className="text-sm whitespace-nowrap">
+                        {format(exam.requestDate, "dd/MM/yy HH:mm", {
+                          locale: es,
+                        })}
                       </div>
                     </td>
                     <td className="p-4 align-middle">
-                      <div className="text-sm">
+                      <div className="text-sm whitespace-nowrap">
                         {exam.resultDate
-                          ? format(exam.resultDate, "PPP", { locale: es })
+                          ? format(exam.resultDate, "dd/MM/yy HH:mm", {
+                              locale: es,
+                            })
                           : "N/A"}
                       </div>
                     </td>
@@ -138,9 +169,13 @@ export default function Completados() {
           </div>
         </div>
       </div>
-      {exams?.length === 0 && !isLoading && (
+      {filteredExams.length === 0 && !isLoading && (
         <div className="text-center py-8">
-          <p className="text-muted-foreground">No hay exámenes completados</p>
+          <p className="text-muted-foreground">
+            {searchQuery
+              ? "No se encontraron exámenes completados"
+              : "No hay exámenes completados"}
+          </p>
         </div>
       )}
 
