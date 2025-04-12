@@ -8,7 +8,7 @@ export const patients = pgTable("patients", {
   firstLastName: text("first_last_name").notNull(),
   secondLastName: text("second_last_name").notNull(),
   age: integer("age").notNull(),
-  gender: text("gender", { enum: ["male", "female"] }).notNull(),
+  gender: text("gender").notNull(),
   bedNumber: integer("bed_number").notNull(),
   primaryService: text("primary_service").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),

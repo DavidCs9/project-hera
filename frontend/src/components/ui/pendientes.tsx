@@ -18,7 +18,7 @@ type Patient = {
   firstLastName: string;
   secondLastName: string;
   age: number;
-  gender: "male" | "female";
+  gender: string;
   bedNumber: number;
   primaryService: string;
 };
