@@ -23,17 +23,17 @@ export default ExamSearchForm;
 const searchFormSchema = z.object({
   firstLastName: z
     .string({
-      required_error: "El apellido paterno es requerido",
+      error: "El apellido paterno es requerido",
     })
     .min(1, "El apellido paterno es requerido"),
   secondLastName: z
     .string({
-      required_error: "El apellido materno es requerido",
+      error: "El apellido materno es requerido",
     })
     .min(1, "El apellido materno es requerido"),
   names: z
     .string({
-      required_error: "El nombre es requerido",
+      error: "El nombre es requerido",
     })
     .min(1, "El nombre es requerido"),
 });

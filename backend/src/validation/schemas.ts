@@ -41,11 +41,17 @@ export const examInputSchema = z.object({
 
 export const fileUploadSchema = z.object({
   examId: z.number().positive(),
-  file: z.file().refine((file) => file.type === "application/pdf", {
-    message: "Only PDF files are allowed",
-  }),
+  file: z
+    .file()
+    .refine((file) => file.type === "application/pdf", {
+      message: "Solo se permiten archivos PDF",
+    })
+    .refine((file) => file.size <= 5 * 1024 * 1024, {
+      message: "El archivo no debe superar los 5MB",
+    }),
 });
 
 //  types
 export type NewPatient = z.infer<typeof patientInputSchema>;
 export type NewExam = z.infer<typeof examInputSchema>;
+export type FileUpload = z.infer<typeof fileUploadSchema>;

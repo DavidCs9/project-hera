@@ -6,13 +6,35 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { trpc } from "@/utils/trpc";
+import { ExamUploadModal } from "./exam-upload-modal";
 
 export default Pendientes;
 
 const ITEMS_PER_PAGE = 6;
 
+type Patient = {
+  name: string;
+  firstLastName: string;
+  secondLastName: string;
+  age: number;
+  gender: "male" | "female";
+  bedNumber: number;
+  primaryService: string;
+};
+
+export type PendingExam = {
+  id: number;
+  examType: string;
+  requestingService: string;
+  requestingDoctor: string;
+  requestDate: Date;
+  status: "pending" | "completed";
+  patient: Patient | null;
+};
+
 function Pendientes() {
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedExam, setSelectedExam] = useState<PendingExam | null>(null);
 
   const { data, isLoading, isError } = useQuery({
     ...trpc.exam.getPendingExams.queryOptions({
@@ -60,6 +82,9 @@ function Pendientes() {
                   <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
                     Estado
                   </th>
+                  <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                    Acciones
+                  </th>
                 </tr>
               </thead>
               <tbody className="[&_tr:last-child]:border-0">
@@ -102,6 +127,15 @@ function Pendientes() {
                     <td className="p-4 align-middle">
                       <Badge variant="purple">Pendiente</Badge>
                     </td>
+                    <td className="p-4 align-middle">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setSelectedExam(exam)}
+                      >
+                        Subir Resultado
+                      </Button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -142,6 +176,13 @@ function Pendientes() {
             </Button>
           </div>
         </div>
+      )}
+      {selectedExam && (
+        <ExamUploadModal
+          exam={selectedExam}
+          isOpen={!!selectedExam}
+          onClose={() => setSelectedExam(null)}
+        />
       )}
     </div>
   );
