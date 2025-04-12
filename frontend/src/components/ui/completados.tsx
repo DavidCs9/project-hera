@@ -9,6 +9,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
 export default function Completados() {
+  const ITEMS_PER_PAGE = 6;
   const [page, setPage] = useState(1);
   const [selectedExam, setSelectedExam] = useState<{
     id: number;
@@ -20,7 +21,7 @@ export default function Completados() {
   const { data, isLoading, isError } = useQuery({
     ...trpc.exam.getCompletedExams.queryOptions({
       page,
-      limit: 10,
+      limit: ITEMS_PER_PAGE,
     }),
   });
 
