@@ -125,7 +125,7 @@ function Pendientes() {
                       </div>
                     </td>
                     <td className="p-4 align-middle">
-                      <Badge variant="purple">Pendiente</Badge>
+                      <Badge variant="pending">Pendiente</Badge>
                     </td>
                     <td className="p-4 align-middle">
                       <Button
