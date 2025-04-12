@@ -9,19 +9,16 @@ const spanishMessages = {
   minBedNumber: "El número mínimo es 1",
 };
 
-// Manual Zod schema for inserting/updating patients (combine if needed)
 export const patientInputSchema = z.object({
   name: z.string().min(1, spanishMessages.required),
   firstLastName: z.string().min(1, spanishMessages.required),
   secondLastName: z.string().min(1, spanishMessages.required),
   age: z
-    .number({ invalid_type_error: spanishMessages.invalidType })
+    .number({ error: spanishMessages.invalidType })
     .min(0, spanishMessages.required), // Use number() for zod
-  gender: z.enum(["male", "female"], {
-    errorMap: () => ({ message: spanishMessages.select }), // Use 'select' for enum dropdowns usually
-  }),
+  gender: z.enum(["male", "female"]),
   bedNumber: z
-    .number({ invalid_type_error: spanishMessages.invalidType })
+    .number({ error: spanishMessages.invalidType })
     .min(1, spanishMessages.minBedNumber),
   primaryService: z.string().min(1, spanishMessages.select),
 });
@@ -29,19 +26,15 @@ export const patientInputSchema = z.object({
 // Manual Zod schema for inserting/updating exams
 export const examInputSchema = z.object({
   patientId: z
-    .number({ invalid_type_error: spanishMessages.invalidType })
+    .number({ error: spanishMessages.invalidType })
     .min(1, spanishMessages.required),
   examType: z.string().min(1, spanishMessages.required),
   requestingService: z.string().min(1, spanishMessages.required),
   requestingDoctor: z.string().min(1, spanishMessages.required),
   requestDate: z.date({
-    required_error: spanishMessages.required,
-    invalid_type_error: spanishMessages.invalidType,
+    error: spanishMessages.required,
   }),
-  status: z.enum(["pending", "completed"], {
-    errorMap: () => ({ message: spanishMessages.invalidEnum }),
-  }),
-  // result and resultDate might be optional or handled differently
+  status: z.enum(["pending", "completed"]),
   result: z.string().optional(),
   resultDate: z.date().optional().nullable(),
 });
