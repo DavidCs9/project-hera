@@ -41,6 +41,7 @@ function PatientForm({ onSubmit }: PatientFormProps) {
       age: 0,
       bedNumber: 0,
       primaryService: "",
+      gender: "",
     },
   });
 

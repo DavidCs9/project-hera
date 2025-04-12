@@ -16,7 +16,7 @@ export const patientInputSchema = z.object({
   age: z
     .number({ invalid_type_error: spanishMessages.invalidType })
     .min(0, spanishMessages.required), // Use number() for zod
-  gender: z.enum(["male", "female"]),
+  gender: z.string().min(1, spanishMessages.select),
   bedNumber: z
     .number({ invalid_type_error: spanishMessages.invalidType })
     .min(1, spanishMessages.minBedNumber),
