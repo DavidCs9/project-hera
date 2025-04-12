@@ -20,6 +20,7 @@ This is a Node.js backend application built with Express, using tRPC for API end
 ```
 backend/
 ├── src/
+│   ├── config/       # Configuration files (S3, etc.)
 │   ├── db/           # Database configuration and schema
 │   ├── routes/       # tRPC routes and procedures
 │   ├── validation/   # Zod validation schemas
@@ -39,6 +40,13 @@ Main entry point of the application. Configures Express server and tRPC middlewa
 ### `src/trpc.ts`
 
 tRPC configuration and setup.
+
+### `src/config/`
+
+Contains configuration files for external services:
+
+- S3 client configuration and setup
+- Other service configurations
 
 ### `src/db/`
 
