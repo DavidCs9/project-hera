@@ -10,7 +10,7 @@ import {
   uploadResultSchema,
 } from "../validation/schemas.ts";
 import { s3Client, S3_BUCKET_NAME } from "../config/s3.ts";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 export const examRouter = t.router({
@@ -164,6 +164,44 @@ export const examRouter = t.router({
       return {
         message: "Exam updated successfully",
         url: s3Url,
+      };
+    }),
+  getPdfUrl: t.procedure
+    .input(
+      z.object({
+        examId: z.number().positive(),
+      })
+    )
+    .query(async ({ input }) => {
+      // Get the exam to find the S3 key from the result URL
+      const exam = await db
+        .select({
+          result: exams.result,
+        })
+        .from(exams)
+        .where(eq(exams.id, input.examId))
+        .limit(1);
+
+      if (!exam[0]?.result) {
+        throw new Error("Exam result not found");
+      }
+
+      // Extract the S3 key from the result URL
+      const resultUrl = exam[0].result;
+      const key = resultUrl.split(`${S3_BUCKET_NAME}.s3.amazonaws.com/`)[1];
+
+      // Generate presigned URL for GET operation
+      const command = new GetObjectCommand({
+        Bucket: S3_BUCKET_NAME,
+        Key: key,
+      });
+
+      const presignedUrl = await getSignedUrl(s3Client, command, {
+        expiresIn: 3600, // URL expires in 1 hour
+      });
+
+      return {
+        presignedUrl,
       };
     }),
 });

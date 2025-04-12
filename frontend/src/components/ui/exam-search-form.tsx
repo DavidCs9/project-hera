@@ -1,4 +1,4 @@
-import { Search, Loader2, AlertCircle } from "lucide-react";
+import { Search, Loader2, AlertCircle, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -17,6 +17,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { trpc } from "@/utils/trpc";
+import { Badge } from "@/components/ui/badge";
+import { ExamPdfModal } from "./exam-pdf-modal";
 
 export default ExamSearchForm;
 
@@ -44,6 +46,13 @@ function ExamSearchForm() {
   const [searchParams, setSearchParams] = useState<SearchFormValues | null>(
     null
   );
+  const [selectedExam, setSelectedExam] = useState<{
+    id: number;
+    examType: string;
+    result: string;
+    resultDate: Date;
+  } | null>(null);
+
   const form = useForm<SearchFormValues>({
     resolver: zodResolver(searchFormSchema),
     mode: "onChange",
@@ -145,6 +154,14 @@ function ExamSearchForm() {
         {data &&
           data?.map(
             (exam: {
+              id: number;
+              examType: string;
+              requestingService: string;
+              requestingDoctor: string;
+              requestDate: Date;
+              resultDate: Date | null;
+              result: string | null;
+              status: "pending" | "completed";
               patient: {
                 name: string;
                 firstLastName: string;
@@ -155,10 +172,23 @@ function ExamSearchForm() {
                 primaryService: string;
               } | null;
             }) => (
-              <div className="mt-6 bg-white/50 p-4 rounded-lg space-y-4">
-                <h3 className="font-semibold text-lg border-b pb-2">
-                  Información del Paciente
-                </h3>
+              <div
+                key={exam.id}
+                className="mt-6 bg-white/50 p-4 rounded-lg space-y-4"
+              >
+                <div className="flex justify-between items-center">
+                  <h3 className="font-semibold text-lg border-b pb-2">
+                    Información del Paciente
+                  </h3>
+                  <Badge
+                    variant={
+                      exam.status === "completed" ? "default" : "secondary"
+                    }
+                    className="ml-2"
+                  >
+                    {exam.status === "completed" ? "Completado" : "Pendiente"}
+                  </Badge>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm text-muted-foreground">
@@ -201,6 +231,55 @@ function ExamSearchForm() {
                     </p>
                   </div>
                 </div>
+                <div className="border-t pt-4">
+                  <h4 className="font-medium mb-2">Información del Examen</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm text-muted-foreground">
+                        Tipo de Examen
+                      </p>
+                      <p className="font-medium">{exam.examType}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">
+                        Fecha de Solicitud
+                      </p>
+                      <p className="font-medium">
+                        {new Date(exam.requestDate).toLocaleDateString()}
+                      </p>
+                    </div>
+                    {exam.status === "completed" && (
+                      <>
+                        <div>
+                          <p className="text-sm text-muted-foreground">
+                            Fecha de Resultado
+                          </p>
+                          <p className="font-medium">
+                            {exam.resultDate
+                              ? new Date(exam.resultDate).toLocaleDateString()
+                              : "N/A"}
+                          </p>
+                        </div>
+                        <div className="flex items-end">
+                          <Button
+                            variant="outline"
+                            onClick={() =>
+                              setSelectedExam({
+                                id: exam.id,
+                                examType: exam.examType,
+                                result: exam.result!,
+                                resultDate: exam.resultDate!,
+                              })
+                            }
+                          >
+                            <FileText className="mr-2 h-4 w-4" />
+                            Ver Resultado
+                          </Button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
               </div>
             )
           )}
@@ -212,6 +291,14 @@ function ExamSearchForm() {
               No se encontró ningún paciente con los datos proporcionados
             </AlertDescription>
           </Alert>
+        )}
+
+        {selectedExam && (
+          <ExamPdfModal
+            exam={selectedExam}
+            isOpen={!!selectedExam}
+            onClose={() => setSelectedExam(null)}
+          />
         )}
       </CardContent>
     </Card>
