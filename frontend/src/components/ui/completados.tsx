@@ -42,7 +42,6 @@ export default function Completados() {
 
   return (
     <div className="space-y-4 w-full">
-      <h2 className="text-2xl font-bold">Exámenes Completados</h2>
       <div className="rounded-md border bg-card">
         <div className="relative w-full overflow-auto">
           <div className="overflow-x-auto">
