@@ -144,35 +144,35 @@ function Pendientes() {
           <p className="text-muted-foreground">No hay exámenes pendientes</p>
         </div>
       )}
-      {totalPages > 1 && (
-        <div className="flex flex-col sm:flex-row items-center sm:justify-between gap-2 ">
-          <div className="text-sm text-muted-foreground">
-            Página {currentPage} de {totalPages} ({totalCount} resultados)
-          </div>
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1 || isLoading}
-            >
-              <ChevronLeft className="h-4 w-4 mr-1" />
-              Anterior
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
-              disabled={currentPage === totalPages || isLoading}
-            >
-              Siguiente
-              <ChevronRight className="h-4 w-4 ml-1" />
-            </Button>
-          </div>
+
+      <div className="flex flex-col sm:flex-row items-center sm:justify-between gap-2 ">
+        <div className="text-sm text-muted-foreground">
+          Página {currentPage} de {totalPages} ({totalCount} resultados)
         </div>
-      )}
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1 || isLoading}
+          >
+            <ChevronLeft className="h-4 w-4 mr-1" />
+            Anterior
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            disabled={currentPage === totalPages || isLoading}
+          >
+            Siguiente
+            <ChevronRight className="h-4 w-4 ml-1" />
+          </Button>
+        </div>
+      </div>
+
       {selectedExam && (
         <ExamUploadModal
           exam={selectedExam}
