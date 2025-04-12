@@ -182,7 +182,7 @@ function ExamSearchForm() {
                   </h3>
                   <Badge
                     variant={
-                      exam.status === "completed" ? "default" : "secondary"
+                      exam.status === "completed" ? "success" : "pending"
                     }
                     className="ml-2"
                   >
@@ -247,6 +247,26 @@ function ExamSearchForm() {
                       <p className="font-medium">
                         {new Date(exam.requestDate).toLocaleDateString()}
                       </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">
+                        Servicio Solicitante
+                      </p>
+                      <p className="font-medium">
+                        {exam.requestingService === "urology"
+                          ? "Urología"
+                          : exam.requestingService === "hematology"
+                          ? "Hematología"
+                          : exam.requestingService === "cardiology"
+                          ? "Cardiología"
+                          : exam.requestingService}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">
+                        Doctor Solicitante
+                      </p>
+                      <p className="font-medium">{exam.requestingDoctor}</p>
                     </div>
                     {exam.status === "completed" && (
                       <>
