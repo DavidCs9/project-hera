@@ -30,8 +30,8 @@ importers:
         specifier: ^2.2.2
         version: 2.2.2
       zod:
-        specifier: ^3.24.2
-        version: 3.24.2
+        specifier: 4.0.0-beta.20250412T085909
+        version: 4.0.0-beta.20250412T085909
     devDependencies:
       '@types/cors':
         specifier: ^2.8.17
@@ -534,6 +534,9 @@ packages:
 
   '@types/serve-static@1.15.7':
     resolution: {integrity: sha512-W8Ym+h8nhuRwaKPaDw34QUkwsGi6Rc4yYqvKFo5rm2FUEhCFbzVWrxXUxuKK8TASjWsysJY0nsmNCGhCOIsrOw==}
+
+  '@zod/core@0.4.6':
+    resolution: {integrity: sha512-0IeEldTobOdkoJPyINVQgOHlgCWbpozSsDjdcd2+VcxKvf8T+SYLDVk7NKt0XJx3C0ImNXAXh3V3yIw46NJyQA==}
 
   accepts@2.0.0:
     resolution: {integrity: sha512-5cvg6CtKwfgdmVqY1WIiXKc3Q1bkRqGLi+2W/6ao+6Y7gu/RCwRuAhGEzh5B4KlszSuTLgZYuqFqo5bImjNKng==}
@@ -1079,8 +1082,8 @@ packages:
     resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}
     engines: {node: '>=0.4'}
 
-  zod@3.24.2:
-    resolution: {integrity: sha512-lY7CDW43ECgW9u1TcT3IoXHflywfVqDYze4waEz812jR/bZ8FHDsl7pFQoSZTz5N+2NqRXs8GBwnAwo3ZNxqhQ==}
+  zod@4.0.0-beta.20250412T085909:
+    resolution: {integrity: sha512-W4OjoCnF5XTuljw4X6Hh3Inp45Ug7mmCWzWfFPv+RZcSIAGz7OPqBKOEDtLjfnJAvoxvY3vO0SkxH1zr0Md/Ag==}
 
 snapshots:
 
@@ -1366,6 +1369,8 @@ snapshots:
       '@types/http-errors': 2.0.4
       '@types/node': 22.14.0
       '@types/send': 0.17.4
+
+  '@zod/core@0.4.6': {}
 
   accepts@2.0.0:
     dependencies:
@@ -1910,4 +1915,6 @@ snapshots:
 
   xtend@4.0.2: {}
 
-  zod@3.24.2: {}
+  zod@4.0.0-beta.20250412T085909:
+    dependencies:
+      '@zod/core': 0.4.6
