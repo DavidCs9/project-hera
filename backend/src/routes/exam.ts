@@ -87,6 +87,55 @@ export const examRouter = t.router({
         totalCount: totalCount,
       };
     }),
+  getCompletedExams: t.procedure
+    .input(
+      z.object({
+        page: z.number().min(1).default(1),
+        limit: z.number().min(1).max(100).default(10),
+      })
+    )
+    .query(async ({ input }) => {
+      const { page, limit } = input;
+      const offset = (page - 1) * limit;
+
+      const completedExams = await db
+        .select({
+          id: exams.id,
+          examType: exams.examType,
+          requestingService: exams.requestingService,
+          requestingDoctor: exams.requestingDoctor,
+          requestDate: exams.requestDate,
+          resultDate: exams.resultDate,
+          result: exams.result,
+          status: exams.status,
+          patient: {
+            name: patients.name,
+            firstLastName: patients.firstLastName,
+            secondLastName: patients.secondLastName,
+            age: patients.age,
+            gender: patients.gender,
+            bedNumber: patients.bedNumber,
+            primaryService: patients.primaryService,
+          },
+        })
+        .from(exams)
+        .where(eq(exams.status, "completed"))
+        .leftJoin(patients, eq(exams.patientId, patients.id))
+        .limit(limit)
+        .offset(offset);
+
+      const totalCountResult = await db
+        .select({ count: count() })
+        .from(exams)
+        .where(eq(exams.status, "completed"));
+
+      const totalCount = totalCountResult[0]?.count ?? 0;
+
+      return {
+        exams: completedExams,
+        totalCount: totalCount,
+      };
+    }),
   getByFullName: t.procedure
     .input(
       z.object({

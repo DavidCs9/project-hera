@@ -1,5 +1,6 @@
 import { OptionsSubir } from "./sidebarSubir";
 import Pendientes from "./pendientes";
+import Completados from "./completados";
 
 export default SubirSwitcher;
 
@@ -12,7 +13,7 @@ function SubirSwitcher({ currentForm }: FormSwitcherProps) {
     case "pendientes":
       return <Pendientes />;
     case "completados":
-      return <div>Form for Completados (Coming soon)</div>;
+      return <Completados />;
     default:
       return <div>Select a form from the sidebar</div>;
   }
