@@ -169,8 +169,8 @@ function Pendientes() {
         </div>
       </div>
       {filteredExams.length === 0 && !isLoading && (
-        <div className="text-center py-8">
-          <p className="text-muted-foreground">
+        <div className="text-center py-8 bg-muted/50 rounded-md">
+          <p>
             {searchQuery
               ? "No se encontraron exámenes pendientes"
               : "No hay exámenes pendientes"}
@@ -198,7 +198,9 @@ function Pendientes() {
             onClick={() =>
               setCurrentPage((prev) => Math.min(prev + 1, totalPages))
             }
-            disabled={currentPage === totalPages || isLoading}
+            disabled={
+              currentPage === totalPages || isLoading || totalPages === 0
+            }
           >
             Siguiente
             <ChevronRight className="h-4 w-4 ml-1" />
