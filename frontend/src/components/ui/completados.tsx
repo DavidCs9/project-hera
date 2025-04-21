@@ -188,7 +188,7 @@ export default function Completados() {
             variant="outline"
             size="sm"
             onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-            disabled={page === 1 || isLoading}
+            disabled={page === 1 || isLoading || totalPages === 0}
           >
             <ChevronLeft className="h-4 w-4 mr-1" />
             Anterior
@@ -197,7 +197,7 @@ export default function Completados() {
             variant="outline"
             size="sm"
             onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
-            disabled={page === totalPages || isLoading}
+            disabled={page === totalPages || isLoading || totalPages === 0}
           >
             Siguiente
             <ChevronRight className="h-4 w-4 ml-1" />

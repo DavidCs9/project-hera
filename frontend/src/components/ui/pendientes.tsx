@@ -187,7 +187,7 @@ function Pendientes() {
             variant="outline"
             size="sm"
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1 || isLoading}
+            disabled={currentPage === 1 || isLoading || totalPages === 0}
           >
             <ChevronLeft className="h-4 w-4 mr-1" />
             Anterior
