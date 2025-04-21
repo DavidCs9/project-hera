@@ -24,7 +24,7 @@ import { toast } from "sonner";
 import { PendingExam, ITEMS_PER_PAGE } from "./pendientes";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
+import { useState } from "react";
 type ExamUploadModalProps = {
   exam: PendingExam;
   isOpen: boolean;
@@ -42,6 +42,7 @@ export function ExamUploadModal({
   isOpen,
   onClose,
 }: ExamUploadModalProps) {
+  const [isLoading, setIsLoading] = useState(false);
   const form = useForm<z.infer<typeof examInputSchema>>({
     resolver: zodResolver(examInputSchema),
     defaultValues: {
@@ -61,6 +62,7 @@ export function ExamUploadModal({
     if (!data.file) return;
 
     try {
+      setIsLoading(true);
       // 1. Get presigned URL from server
       const { presignedUrl, key } = await generateUrl.mutateAsync({
         examId: exam.id,
@@ -100,6 +102,8 @@ export function ExamUploadModal({
     } catch (error) {
       console.error("Error uploading file:", error);
       toast.error("Error al subir el archivo");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -165,12 +169,8 @@ export function ExamUploadModal({
                   </FormItem>
                 )}
               />
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={generateUrl.isPending || updateExam.isPending}
-              >
-                {generateUrl.isPending || updateExam.isPending ? (
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Subiendo...
