@@ -21,9 +21,10 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { PendingExam } from "./pendientes";
+import { PendingExam, ITEMS_PER_PAGE } from "./pendientes";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+
 type ExamUploadModalProps = {
   exam: PendingExam;
   isOpen: boolean;
@@ -90,7 +91,7 @@ export function ExamUploadModal({
       queryClient.invalidateQueries({
         queryKey: trpc.exam.getPendingExams.queryOptions({
           page: 1,
-          limit: 6,
+          limit: ITEMS_PER_PAGE,
         }).queryKey,
       });
 

@@ -11,7 +11,7 @@ import { ExamUploadModal } from "./exam-upload-modal";
 
 export default Pendientes;
 
-const ITEMS_PER_PAGE = 5;
+export const ITEMS_PER_PAGE = 5;
 
 type Patient = {
   name: string;
