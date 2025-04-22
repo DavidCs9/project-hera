@@ -32,6 +32,15 @@ export const exams = pgTable("exams", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  email: text("email").notNull().unique(),
+  password: text("password").notNull(),
+  role: text("role").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
 // KEEP the type exports
 export type Patient = typeof patients.$inferSelect;
 export type Exam = typeof exams.$inferSelect;
+export type User = typeof users.$inferSelect;
