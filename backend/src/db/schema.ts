@@ -1,5 +1,13 @@
 // backend/src/db/schema.ts
-import { pgTable, serial, text, integer, timestamp } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  serial,
+  text,
+  integer,
+  timestamp,
+  varchar,
+  boolean,
+} from "drizzle-orm/pg-core";
 
 export const patients = pgTable("patients", {
   // ... columns remain the same
@@ -32,6 +40,19 @@ export const exams = pgTable("exams", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  password: varchar("password", { length: 255 }).notNull(),
+  firstName: varchar("first_name", { length: 100 }).notNull(),
+  lastName: varchar("last_name", { length: 100 }).notNull(),
+  role: text("role", { enum: ["admin", "doctor", "reviewer"] }).notNull(),
+  isActive: boolean("is_active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 // KEEP the type exports
 export type Patient = typeof patients.$inferSelect;
 export type Exam = typeof exams.$inferSelect;
+export type User = typeof users.$inferSelect;
